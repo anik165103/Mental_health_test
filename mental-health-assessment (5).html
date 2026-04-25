@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindSpace — Mental Health Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sage: #7C9E8A;
+    --sage-light: #B8D4C3;
+    --sage-dark: #3D6B54;
+    --cream: #F5F0E8;
+    --warm-white: #FEFCF8;
+    --deep: #1C2B25;
+    --muted: #6B7D75;
+    --accent: #D4956A;
+    --accent-light: #F5DDC8;
+    --lavender: #9B8EC4;
+    --sky: #7FB3CC;
+    --danger: #C0614A;
+    --success: #4A8C6A;
+    --warning: #C49A3C;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--deep);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: linear-gradient(145deg, #1C2B25 0%, #2E4A3A 40%, #3D6B54 100%);
+    z-index: 0;
+  }
+  .hero-circles {
+    position: absolute; inset: 0; z-index: 1; overflow: hidden;
+  }
+  .circle {
+    position: absolute; border-radius: 50%;
+    background: rgba(124,158,138,0.12);
+    animation: float 8s ease-in-out infinite;
+  }
+  .c1 { width: 500px; height: 500px; top: -150px; right: -100px; animation-delay: 0s; }
+  .c2 { width: 300px; height: 300px; bottom: 10%; left: -80px; animation-delay: 3s; }
+  .c3 { width: 200px; height: 200px; top: 40%; right: 15%; animation-delay: 1.5s; background: rgba(212,149,106,0.1); }
+  .c4 { width: 150px; height: 150px; top: 20%; left: 20%; animation-delay: 4s; background: rgba(155,142,196,0.12); }
+  @keyframes float {
+    0%,100% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-30px) scale(1.05); }
+  }
+  .hero-nav {
+    position: relative; z-index: 10;
+    padding: 2rem 3rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem; color: #fff;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: var(--sage-light); }
+  .hero-content {
+    flex: 1; display: flex; align-items: center;
+    position: relative; z-index: 10;
+    padding: 3rem;
+    gap: 4rem;
+  }
+  .hero-text { flex: 1; max-width: 560px; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(124,158,138,0.2);
+    border: 1px solid rgba(124,158,138,0.4);
+    border-radius: 100px;
+    padding: 6px 16px; margin-bottom: 1.5rem;
+    font-size: 13px; color: var(--sage-light); letter-spacing: 0.5px;
+  }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--sage-light); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 5vw, 4.2rem);
+    color: #fff; line-height: 1.15;
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+  }
+  .hero h1 em { color: var(--sage-light); font-style: italic; }
+  .hero p {
+    font-size: 1.1rem; color: rgba(255,255,255,0.7);
+    line-height: 1.8; margin-bottom: 2.5rem;
+    font-weight: 300;
+  }
+  .cta-btn {
+    display: inline-flex; align-items: center; gap: 12px;
+    background: var(--accent);
+    color: #fff; border: none;
+    padding: 16px 36px; border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem; font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+  }
+  .cta-btn:hover { background: #C4844E; transform: translateY(-2px); box-shadow: 0 12px 32px rgba(212,149,106,0.4); }
+  .cta-arrow { width: 20px; height: 20px; border-radius: 50%; background: rgba(255,255,255,0.25); display: flex; align-items: center; justify-content: center; font-size: 12px; }
+
+  /* hero image mosaic */
+  .hero-mosaic {
+    flex: 0 0 420px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 180px 180px;
+    gap: 12px;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .mosaic-img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    border-radius: 12px;
+    filter: brightness(0.85) saturate(0.9);
+    transition: filter 0.3s;
+  }
+  .mosaic-img:hover { filter: brightness(1) saturate(1.1); }
+  .mosaic-tall { grid-row: span 2; border-radius: 12px; }
+
+  /* ── STATS BAND ── */
+  .stats-band {
+    background: var(--warm-white);
+    padding: 2rem 3rem;
+    display: flex; align-items: center;
+    justify-content: center; gap: 4rem;
+    border-bottom: 1px solid rgba(124,158,138,0.2);
+  }
+  .stat { text-align: center; }
+  .stat-num { font-family: 'Playfair Display', serif; font-size: 2rem; color: var(--sage-dark); font-weight: 600; }
+  .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+  .stat-div { width: 1px; height: 40px; background: rgba(124,158,138,0.3); }
+
+  /* ── INFO SECTION ── */
+  .info-section {
+    padding: 5rem 3rem;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .section-tag {
+    font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+    color: var(--sage); font-weight: 500; margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    color: var(--deep); line-height: 1.3;
+    margin-bottom: 1rem;
+  }
+  .info-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1.5rem; margin-top: 3rem;
+  }
+  .info-card {
+    background: var(--warm-white);
+    border-radius: 16px;
+    padding: 1.75rem;
+    border: 1px solid rgba(124,158,138,0.15);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .info-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .info-card.c-sage::before { background: var(--sage); }
+  .info-card.c-accent::before { background: var(--accent); }
+  .info-card.c-lavender::before { background: var(--lavender); }
+  .info-card.c-sky::before { background: var(--sky); }
+  .info-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(28,43,37,0.08); }
+  .card-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .card-title { font-size: 1rem; font-weight: 500; color: var(--deep); margin-bottom: 8px; }
+  .card-desc { font-size: 13.5px; color: var(--muted); line-height: 1.7; }
+
+  /* ── PHOTO STRIP ── */
+  .photo-strip {
+    display: flex; gap: 16px;
+    padding: 0 3rem 4rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .photo-strip::-webkit-scrollbar { display: none; }
+  .strip-img {
+    flex: 0 0 260px; height: 180px;
+    border-radius: 14px; overflow: hidden;
+  }
+  .strip-img img { width: 100%; height: 100%; object-fit: cover; filter: saturate(0.85); transition: filter 0.3s; }
+  .strip-img:hover img { filter: saturate(1.1); }
+
+  /* ── QUIZ SECTION ── */
+  #quiz-section {
+    background: var(--deep);
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center;
+    padding: 4rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .quiz-bg-pattern {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 20% 50%, rgba(124,158,138,0.07) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 20%, rgba(155,142,196,0.07) 0%, transparent 50%);
+  }
+  .quiz-header {
+    text-align: center; margin-bottom: 3rem;
+    position: relative; z-index: 2;
+    max-width: 600px;
+  }
+  .quiz-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    color: #fff; margin-bottom: 0.75rem; font-weight: 400;
+  }
+  .quiz-header p { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.7; }
+
+  .progress-container {
+    width: 100%; max-width: 640px;
+    margin-bottom: 2rem;
+    position: relative; z-index: 2;
+  }
+  .progress-meta { display: flex; justify-content: space-between; margin-bottom: 10px; }
+  .progress-meta span { font-size: 13px; color: rgba(255,255,255,0.5); }
+  .progress-track { height: 4px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--sage), var(--accent)); border-radius: 4px; transition: width 0.5s ease; }
+
+  .q-card {
+    width: 100%; max-width: 640px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 20px;
+    padding: 2.5rem;
+    position: relative; z-index: 2;
+    backdrop-filter: blur(10px);
+    animation: slideIn 0.4s ease;
+  }
+  @keyframes slideIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+
+  .q-category {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--sage-light); font-weight: 500;
+    background: rgba(124,158,138,0.15);
+    padding: 5px 12px; border-radius: 100px;
+    margin-bottom: 1.25rem;
+  }
+  .q-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem; color: #fff;
+    line-height: 1.6; margin-bottom: 2rem; font-weight: 400;
+  }
+  .options-grid { display: flex; flex-direction: column; gap: 10px; }
+  .opt {
+    padding: 14px 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: rgba(255,255,255,0.8);
+    font-size: 14px; cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    font-family: 'DM Sans', sans-serif;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .opt-dot { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.3); flex-shrink: 0; transition: all 0.2s; }
+  .opt:hover { background: rgba(124,158,138,0.15); border-color: rgba(124,158,138,0.4); color: #fff; }
+  .opt:hover .opt-dot { border-color: var(--sage-light); }
+  .opt.selected { background: rgba(124,158,138,0.2); border-color: var(--sage); color: #fff; }
+  .opt.selected .opt-dot { background: var(--sage); border-color: var(--sage); }
+
+  .quiz-nav {
+    display: flex; align-items: center; justify-content: space-between;
+    width: 100%; max-width: 640px;
+    margin-top: 1.5rem;
+    position: relative; z-index: 2;
+  }
+  .nav-btn {
+    padding: 12px 28px; border-radius: 100px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px; font-weight: 500;
+    cursor: pointer; transition: all 0.2s;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: transparent; color: rgba(255,255,255,0.7);
+  }
+  .nav-btn:hover { background: rgba(255,255,255,0.08); color: #fff; }
+  .nav-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+  .nav-btn.primary {
+    background: var(--accent); color: #fff;
+    border-color: var(--accent);
+  }
+  .nav-btn.primary:hover { background: #C4844E; box-shadow: 0 8px 24px rgba(212,149,106,0.35); }
+  .answered-count { font-size: 13px; color: rgba(255,255,255,0.4); }
+
+  /* ── RESULTS ── */
+  #result-section {
+    display: none;
+    background: var(--cream);
+    min-height: 100vh;
+    padding: 4rem 1.5rem;
+    animation: fadeIn 0.6s ease;
+  }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .result-inner { max-width: 700px; margin: 0 auto; }
+  .result-hero {
+    border-radius: 20px;
+    padding: 3rem;
+    margin-bottom: 2rem;
+    position: relative; overflow: hidden;
+  }
+  .result-hero-img {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.2;
+    border-radius: 20px;
+  }
+  .result-hero-content { position: relative; z-index: 2; }
+  .result-status { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; font-weight: 500; margin-bottom: 1rem; opacity: 0.8; }
+  .result-title { font-family: 'Playfair Display', serif; font-size: 2rem; margin-bottom: 1rem; font-weight: 600; line-height: 1.3; }
+  .result-desc { font-size: 15px; line-height: 1.8; opacity: 0.85; }
+
+  .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 2rem; }
+  .metric-card {
+    background: var(--warm-white);
+    border: 1px solid rgba(124,158,138,0.15);
+    border-radius: 14px;
+    padding: 1.25rem;
+  }
+  .metric-label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .metric-bar-track { height: 6px; background: rgba(28,43,37,0.08); border-radius: 3px; margin-bottom: 8px; overflow: hidden; }
+  .metric-bar { height: 6px; border-radius: 3px; transition: width 0.8s cubic-bezier(.4,0,.2,1); }
+  .metric-value { font-size: 13px; font-weight: 500; color: var(--deep); }
+
+  .insights-card {
+    background: var(--warm-white);
+    border: 1px solid rgba(124,158,138,0.15);
+    border-radius: 16px;
+    padding: 1.75rem;
+    margin-bottom: 16px;
+  }
+  .insight-title { font-size: 15px; font-weight: 500; color: var(--deep); margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+  .insight-icon { font-size: 18px; }
+  .insight-text { font-size: 14px; color: var(--muted); line-height: 1.8; }
+
+  .disclaimer-box {
+    background: rgba(124,158,138,0.08);
+    border: 1px solid rgba(124,158,138,0.2);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    font-size: 13px; color: var(--muted);
+    line-height: 1.7; margin-top: 1.5rem;
+    text-align: center;
+  }
+  .retake-btn {
+    display: block; width: 100%;
+    padding: 16px;
+    background: var(--deep); color: #fff;
+    border: none; border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 500;
+    cursor: pointer; margin-top: 1rem;
+    transition: all 0.2s;
+  }
+  .retake-btn:hover { background: var(--sage-dark); }
+
+  /* ── USER INFO SCREEN ── */
+  #info-screen {
+    background: var(--deep);
+    min-height: 100vh;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 4rem 1.5rem;
+    position: relative; overflow: hidden;
+  }
+  .info-screen-card {
+    width: 100%; max-width: 480px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 24px;
+    padding: 3rem;
+    backdrop-filter: blur(10px);
+    position: relative; z-index: 2;
+    animation: slideIn 0.4s ease;
+  }
+  .info-screen-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem; color: #fff;
+    font-weight: 400; margin-bottom: 0.5rem;
+  }
+  .info-screen-card p {
+    font-size: 14px; color: rgba(255,255,255,0.5);
+    line-height: 1.7; margin-bottom: 2rem;
+  }
+  .field-group { margin-bottom: 1.25rem; }
+  .field-label {
+    display: block;
+    font-size: 12px; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--sage-light); font-weight: 500;
+    margin-bottom: 8px;
+  }
+  .field-input {
+    width: 100%;
+    padding: 14px 18px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 12px;
+    color: #fff;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .field-input::placeholder { color: rgba(255,255,255,0.3); }
+  .field-input:focus { border-color: var(--sage); background: rgba(124,158,138,0.1); }
+  .start-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--accent); color: #fff;
+    border: none; border-radius: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px; font-weight: 500;
+    cursor: pointer; margin-top: 0.5rem;
+    transition: all 0.2s;
+  }
+  .start-btn:hover { background: #C4844E; box-shadow: 0 8px 24px rgba(212,149,106,0.35); }
+  .start-btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+
+  /* user name in result */
+  .result-greeting {
+    font-size: 14px; color: var(--muted);
+    margin-bottom: 1.5rem; text-align: center;
+    font-style: italic;
+  }
+
+  @media(max-width: 768px) {
+    .hero-content { flex-direction: column; padding: 2rem; }
+    .hero-mosaic { flex: none; width: 100%; grid-template-rows: 130px 130px; }
+    .hero-nav { padding: 1.5rem; }
+    .stats-band { gap: 2rem; flex-wrap: wrap; }
+    .info-section { padding: 3rem 1.5rem; }
+    .result-grid { grid-template-columns: 1fr; }
+    .q-card { padding: 1.75rem; }
+    .info-screen-card { padding: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ HERO ══ -->
+<section class="hero" id="home">
+  <div class="hero-bg"></div>
+  <div class="hero-circles">
+    <div class="circle c1"></div>
+    <div class="circle c2"></div>
+    <div class="circle c3"></div>
+    <div class="circle c4"></div>
+  </div>
+  <nav class="hero-nav">
+    <div class="logo">Mind<span>Space</span></div>
+  </nav>
+  <div class="hero-content">
+    <div class="hero-text">
+      <div class="hero-badge"><div class="dot"></div> Free · Confidential · Science-based</div>
+      <h1>How is your <em>mind</em> doing today?</h1>
+      <p>A thoughtful 20-question check-in covering sleep, stress, work pressure, anxiety, and emotional wellbeing — giving you instant, honest insight into your mental health.</p>
+      <a href="#quiz-section" class="cta-btn">
+        Begin Assessment
+        <span class="cta-arrow">→</span>
+      </a>
+    </div>
+    <div class="hero-mosaic">
+      <img class="mosaic-img mosaic-tall" src="https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=400&q=80" alt="Peaceful meditation" />
+      <img class="mosaic-img" src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&q=80" alt="Mindfulness" />
+      <img class="mosaic-img" src="https://images.unsplash.com/photo-1517960413843-0aee8e2b3285?w=300&q=80" alt="Nature calm" />
+    </div>
+  </div>
+</section>
+
+<!-- ══ STATS ══ -->
+<div class="stats-band">
+  <div class="stat"><div class="stat-num">20</div><div class="stat-label">Focused questions</div></div>
+  <div class="stat-div"></div>
+  <div class="stat"><div class="stat-num">5 min</div><div class="stat-label">Average time</div></div>
+  <div class="stat-div"></div>
+  <div class="stat"><div class="stat-num">7</div><div class="stat-label">Domains assessed</div></div>
+  <div class="stat-div"></div>
+  <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Anonymous & free</div></div>
+</div>
+
+<!-- ══ INFO CARDS ══ -->
+<section class="info-section">
+  <p class="section-tag">What we assess</p>
+  <h2 class="section-title">Understanding your whole mental picture</h2>
+  <div class="info-grid">
+    <div class="info-card c-sage">
+      <div class="card-icon">😴</div>
+      <div class="card-title">Sleep quality</div>
+      <div class="card-desc">Are you getting enough rest? Poor sleep is one of the strongest early signals of mental health strain.</div>
+    </div>
+    <div class="info-card c-accent">
+      <div class="card-icon">⚡</div>
+      <div class="card-title">Work & daily stress</div>
+      <div class="card-desc">Deadlines, workload, and the pressure to perform — we evaluate how these are affecting you.</div>
+    </div>
+    <div class="info-card c-lavender">
+      <div class="card-icon">🧠</div>
+      <div class="card-title">Anxiety & tension</div>
+      <div class="card-desc">Persistent worry, racing thoughts, and physical tension are key anxiety markers we screen for.</div>
+    </div>
+    <div class="info-card c-sky">
+      <div class="card-icon">💛</div>
+      <div class="card-title">Mood & motivation</div>
+      <div class="card-desc">Low mood, loss of interest, and emotional flatness are important signals worth paying attention to.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ PHOTO STRIP ══ -->
+<div class="photo-strip">
+  <div class="strip-img"><img src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=400&q=80" alt="Sunrise calm"/></div>
+  <div class="strip-img"><img src="https://images.unsplash.com/photo-1474418397713-7ede21d49118?w=400&q=80" alt="Forest walk"/></div>
+  <div class="strip-img"><img src="https://images.unsplash.com/photo-1520206183501-b80df61043c2?w=400&q=80" alt="Journaling"/></div>
+  <div class="strip-img"><img src="https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=400&q=80" alt="Breathing"/></div>
+  <div class="strip-img"><img src="https://images.unsplash.com/photo-1545389336-cf090694435e?w=400&q=80" alt="Yoga"/></div>
+  <div class="strip-img"><img src="https://images.unsplash.com/photo-1471286174890-9c112ffca5b4?w=400&q=80" alt="Peaceful water"/></div>
+</div>
+
+<!-- ══ USER INFO SCREEN ══ -->
+<section id="info-screen" style="display:flex">
+  <div class="quiz-bg-pattern"></div>
+  <div class="info-screen-card">
+    <h2>Before we begin</h2>
+    <p>Tell us a little about yourself. This information stays private and helps personalise your results.</p>
+    <div class="field-group">
+      <label class="field-label" for="user-name">Your Name</label>
+      <input class="field-input" id="user-name" type="text" placeholder="Enter your name" oninput="validateInfoForm()" onkeyup="validateInfoForm()" />
+    </div>
+    <div class="field-group">
+      <label class="field-label" for="user-age">Your Age</label>
+      <input class="field-input" id="user-age" type="number" placeholder="Enter your age" min="1" max="120" oninput="validateInfoForm()" onkeyup="validateInfoForm()" onchange="validateInfoForm()" />
+    </div>
+    <button class="start-btn" id="start-btn" onclick="startAssessment()">Start Assessment →</button>
+  </div>
+</section>
+
+<!-- ══ QUIZ ══ -->
+<section id="quiz-section" style="display:none">
+  <div class="quiz-bg-pattern"></div>
+  <div class="quiz-header">
+    <h2>Your mental health check-in</h2>
+    <p>Answer each question honestly — there are no right or wrong answers. This is a safe, private space.</p>
+  </div>
+  <div class="progress-container">
+    <div class="progress-meta">
+      <span id="q-label">Question 1 of 20</span>
+      <span id="answered-label">0 answered</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="prog" style="width:5%"></div></div>
+  </div>
+  <div class="q-card" id="q-card">
+    <div class="q-category" id="q-cat">Category</div>
+    <div class="q-text" id="q-text">Loading…</div>
+    <div class="options-grid" id="opts"></div>
+  </div>
+  <div class="quiz-nav">
+    <button class="nav-btn" id="prev-btn" onclick="prevQ()" disabled>← Back</button>
+    <span class="answered-count" id="ans-count">0 / 20</span>
+    <button class="nav-btn primary" id="next-btn" onclick="nextQ()" disabled>Next →</button>
+  </div>
+</section>
+
+<!-- ══ RESULTS ══ -->
+<section id="result-section">
+  <div class="result-inner">
+    <div class="result-greeting" id="result-greeting"></div>
+    <div class="result-hero" id="res-hero">
+      <img class="result-hero-img" id="res-img" src="" alt="" />
+      <div class="result-hero-content">
+        <div class="result-status" id="res-status"></div>
+        <div class="result-title" id="res-title"></div>
+        <div class="result-desc" id="res-desc"></div>
+      </div>
+    </div>
+    <div class="result-grid" id="metrics"></div>
+    <div id="insights"></div>
+    <div class="disclaimer-box">This assessment is for self-awareness only and does not constitute a clinical diagnosis. If you are in distress, please contact a qualified mental health professional or a crisis helpline immediately.</div>
+    <button class="retake-btn" onclick="restart()">Retake assessment</button>
+  </div>
+</section>
+
+<script>
+let userName = "";
+let userAge = "";
+
+function validateInfoForm() {
+  const name = document.getElementById("user-name").value.trim();
+  const ageVal = document.getElementById("user-age").value;
+  const age = Number(ageVal);
+  const valid = name.length > 0 && ageVal !== "" && age >= 1 && age <= 120;
+  const btn = document.getElementById("start-btn");
+  btn.style.opacity = valid ? "1" : "0.45";
+}
+
+function startAssessment() {
+  const name = document.getElementById("user-name").value.trim();
+  const ageVal = document.getElementById("user-age").value;
+  const age = Number(ageVal);
+  if (!name) { alert("Please enter your name."); return; }
+  if (!ageVal || age < 1 || age > 120) { alert("Please enter a valid age."); return; }
+  userName = name;
+  userAge = ageVal;
+  document.getElementById("info-screen").style.display = "none";
+  const qs = document.getElementById("quiz-section");
+  qs.style.display = "flex";
+  render();
+  qs.scrollIntoView({ behavior: "smooth" });
+}
+
+
+const Qs = [
+  { cat:"😴 Sleep", text:"On average, how many hours of sleep are you getting each night?", opts:["7–9 hours (refreshing)","6–7 hours (okay)","4–6 hours (not enough)","Under 4 hours (very little)"] },
+  { cat:"😴 Sleep", text:"How would you describe the quality of your sleep — do you wake up feeling rested?", opts:["Yes, most mornings","Sometimes, not always","Rarely feel rested","Almost never rested"] },
+  { cat:"😴 Sleep", text:"How often do you experience trouble falling or staying asleep because of thoughts or worry?", opts:["Rarely","Occasionally","Several nights a week","Almost every night"] },
+  { cat:"⚡ Work stress", text:"How pressured do you feel by your work or daily responsibilities?", opts:["Very manageable","Somewhat stressed","Often overwhelmed","Constantly overwhelmed"] },
+  { cat:"⚡ Work stress", text:"After your workday ends, how well are you able to mentally disconnect?", opts:["Easily — I switch off","Takes a while but I do","I struggle to let go","I almost never disconnect"] },
+  { cat:"⚡ Work stress", text:"How often do work or life responsibilities affect your personal time and relationships?", opts:["Rarely","Sometimes","Often","Almost always"] },
+  { cat:"😰 Anxiety", text:"How often do you experience persistent worrying about things you can't control?", opts:["Rarely","Occasionally","Frequently","Almost all the time"] },
+  { cat:"😰 Anxiety", text:"How often do you feel physical tension — tight chest, shallow breathing, or restlessness?", opts:["Rarely","Sometimes","Often","Daily"] },
+  { cat:"😰 Anxiety", text:"Do you find yourself avoiding situations or people due to fear or anxiety?", opts:["Almost never","Occasionally","Fairly often","Very frequently"] },
+  { cat:"💛 Mood", text:"Over the past two weeks, how often have you felt down, empty, or hopeless?", opts:["Not at all","A few days","More than a week","Nearly every day"] },
+  { cat:"💛 Mood", text:"How much have you enjoyed activities or hobbies that you normally like?", opts:["Just as much as always","Slightly less","Noticeably less","Barely at all"] },
+  { cat:"💛 Mood", text:"How often do you feel irritable, short-tempered, or emotionally reactive?", opts:["Rarely","Occasionally","Often","Very often"] },
+  { cat:"🔋 Energy", text:"How would you describe your energy levels through the day?", opts:["Strong and consistent","Decent, small dips","Often low or fatigued","Exhausted most of the time"] },
+  { cat:"🔋 Energy", text:"How motivated do you feel to start and complete everyday tasks?", opts:["Very motivated","Reasonably motivated","Often lack motivation","Struggle to start anything"] },
+  { cat:"🤝 Social", text:"How connected do you feel to the people in your life?", opts:["Very connected","Somewhat connected","A little isolated","Quite lonely"] },
+  { cat:"🤝 Social", text:"How often do you socially withdraw or cancel plans due to low mood or exhaustion?", opts:["Rarely","Sometimes","Often","Almost always"] },
+  { cat:"🧠 Focus", text:"How well are you able to concentrate and make decisions lately?", opts:["Very well","Mostly okay","With some difficulty","Very difficult"] },
+  { cat:"🍽 Self-care", text:"How well are you managing basic self-care — meals, exercise, hygiene?", opts:["Very well","Reasonably well","Not great","Poorly neglected"] },
+  { cat:"🌱 Purpose", text:"How often do you feel a sense of meaning or purpose in your daily life?", opts:["Often","Sometimes","Rarely","Almost never"] },
+  { cat:"🆘 Wellbeing", text:"Have you had any thoughts that you would be better off not being here, or of harming yourself?", opts:["Never","Very rarely — fleeting","Sometimes","Often or currently"] }
+];
+
+const answers = new Array(20).fill(null);
+let cur = 0;
+
+function render() {
+  const q = Qs[cur];
+  document.getElementById("q-label").textContent = `Question ${cur+1} of 20`;
+  document.getElementById("q-cat").textContent = q.cat;
+  document.getElementById("q-text").textContent = q.text;
+  const optsEl = document.getElementById("opts");
+  optsEl.innerHTML = "";
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement("button");
+    btn.className = "opt" + (answers[cur] === i ? " selected" : "");
+    btn.innerHTML = `<span class="opt-dot"></span>${o}`;
+    btn.onclick = () => { answers[cur] = i; render(); };
+    optsEl.appendChild(btn);
+  });
+  const done = answers.filter(a => a !== null).length;
+  const pct = Math.max(5, Math.round((done / 20) * 100));
+  document.getElementById("prog").style.width = pct + "%";
+  document.getElementById("answered-label").textContent = `${done} answered`;
+  document.getElementById("ans-count").textContent = `${done} / 20`;
+  document.getElementById("prev-btn").disabled = cur === 0;
+  const nb = document.getElementById("next-btn");
+  nb.disabled = answers[cur] === null;
+  if (cur === 19 && done === 20) { nb.textContent = "See my results →"; nb.onclick = showResults; }
+  else { nb.textContent = "Next →"; nb.onclick = nextQ; }
+  document.getElementById("q-card").style.animation = "none";
+  void document.getElementById("q-card").offsetWidth;
+  document.getElementById("q-card").style.animation = "slideIn 0.35s ease";
+}
+
+function nextQ() { if (cur < 19) { cur++; render(); } }
+function prevQ() { if (cur > 0) { cur--; render(); } }
+
+function showResults() {
+  document.getElementById("quiz-section").style.display = "none";
+  document.getElementById("result-section").style.display = "block";
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  const total = answers.reduce((s, a) => s + (a || 0), 0);
+  const max = 60; // q19 (crisis) max=3, others max=3
+  const crisis = answers[19];
+
+  // domain scores (0–3 scale, averaged)
+  const sleepAvg = (answers[0] + answers[1] + answers[2]) / 3;
+  const workAvg = (answers[3] + answers[4] + answers[5]) / 3;
+  const anxAvg = (answers[6] + answers[7] + answers[8]) / 3;
+  const moodAvg = (answers[9] + answers[10] + answers[11]) / 3;
+  const energyAvg = (answers[12] + answers[13]) / 2;
+  const socialAvg = (answers[14] + answers[15]) / 2;
+  const pct = Math.round((total / (20 * 3)) * 100);
+
+  let config;
+  if (crisis >= 2) {
+    config = {
+      bg: "#8B1A1A", color: "#fff",
+      status: "Please seek support",
+      title: "You may be in significant distress",
+      desc: "Your responses — especially regarding thoughts of self-harm — suggest you're going through something very difficult. You are not alone. Please reach out to someone you trust or contact a crisis helpline today. You deserve care and support.",
+      img: "https://images.unsplash.com/photo-1490730141103-6cac27aaab94?w=800&q=80"
+    };
+  } else if (pct <= 22) {
+    config = {
+      bg: "#2D5A3D", color: "#fff",
+      status: "Positive wellbeing",
+      title: "Your mental health looks strong",
+      desc: "Your responses suggest you're in a good, balanced mental space. You're sleeping reasonably well, managing stress, feeling connected, and maintaining your sense of purpose. Keep nurturing these foundations.",
+      img: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80"
+    };
+  } else if (pct <= 44) {
+    config = {
+      bg: "#5A6E3D", color: "#fff",
+      status: "Mild concern",
+      title: "A few areas worth attention",
+      desc: "You're doing reasonably well overall, but some responses suggest mild stress, occasional low mood, or slight sleep disruption. Small, consistent self-care habits now can prevent these from deepening.",
+      img: "https://images.unsplash.com/photo-1474418397713-7ede21d49118?w=800&q=80"
+    };
+  } else if (pct <= 65) {
+    config = {
+      bg: "#7A5A2A", color: "#fff",
+      status: "Moderate distress",
+      title: "You're carrying a significant load",
+      desc: "Multiple areas — likely sleep, work stress, or anxiety — are adding up to a heavier burden than you should carry alone. This level of strain is common, but it's worth addressing. Consider talking to someone you trust, or a professional.",
+      img: "https://images.unsplash.com/photo-1520206183501-b80df61043c2?w=800&q=80"
+    };
+  } else {
+    config = {
+      bg: "#6B2020", color: "#fff",
+      status: "High distress",
+      title: "You're struggling — and that's real",
+      desc: "Your responses indicate considerable emotional difficulty across several areas of your life. This is not weakness — it's a signal worth taking seriously. Please consider speaking with a mental health professional. Support can make a real difference.",
+      img: "https://images.unsplash.com/photo-1508672019048-805c876b67e2?w=800&q=80"
+    };
+  }
+
+  document.getElementById("result-greeting").textContent = `Results for ${userName}, age ${userAge}`;
+  const hero = document.getElementById("res-hero");
+  hero.style.background = config.bg;
+  document.getElementById("res-img").src = config.img;
+  document.getElementById("res-status").textContent = config.status;
+  document.getElementById("res-status").style.color = config.color;
+  document.getElementById("res-title").textContent = config.title;
+  document.getElementById("res-title").style.color = config.color;
+  document.getElementById("res-desc").textContent = config.desc;
+  document.getElementById("res-desc").style.color = config.color;
+
+  const metrics = [
+    { label: "Sleep quality", val: sleepAvg, color: "#7C9E8A" },
+    { label: "Work / life stress", val: workAvg, color: "#D4956A" },
+    { label: "Anxiety level", val: anxAvg, color: "#9B8EC4" },
+    { label: "Mood", val: moodAvg, color: "#C49A3C" },
+    { label: "Energy", val: energyAvg, color: "#7FB3CC" },
+    { label: "Social connection", val: socialAvg, color: "#4A8C6A" }
+  ];
+  document.getElementById("metrics").innerHTML = metrics.map(m => {
+    const w = Math.round((m.val / 3) * 100);
+    const label = w <= 30 ? "Low concern" : w <= 60 ? "Moderate" : "High concern";
+    return `<div class="metric-card">
+      <div class="metric-label">${m.label}</div>
+      <div class="metric-bar-track"><div class="metric-bar" style="width:${w}%;background:${m.color}"></div></div>
+      <div class="metric-value" style="color:${m.color}">${label}</div>
+    </div>`;
+  }).join("");
+
+  const tips = [];
+  if (sleepAvg > 1.3) tips.push({ icon: "😴", title: "Improve your sleep", text: "Stick to a consistent bedtime, even on weekends. Dim screens 1 hour before bed, keep the room cool, and try 4-7-8 breathing to calm your nervous system before sleep." });
+  if (workAvg > 1.3) tips.push({ icon: "⚡", title: "Manage work pressure", text: "Create a clear end-of-day ritual to signal your brain that work is over — a short walk, changing clothes, or making tea. Time-blocking and saying no to one non-essential task can reclaim energy." });
+  if (anxAvg > 1.3) tips.push({ icon: "😰", title: "Ease anxiety", text: "Write your worries down to contain them. Practice box breathing (4 in, 4 hold, 4 out, 4 hold). Regular aerobic exercise is one of the most evidence-backed anxiety reducers." });
+  if (moodAvg > 1.3) tips.push({ icon: "💛", title: "Support your mood", text: "Behavioral activation — doing something meaningful even when motivation is low — reliably lifts mood over time. Aim for one small win per day: a walk, cooking, a call to a friend." });
+  if (energyAvg > 1.3) tips.push({ icon: "🔋", title: "Rebuild your energy", text: "Chronic low energy often signals depleted reserves. Prioritize protein-rich meals, limit caffeine after 2pm, and protect 20 minutes of daily movement, even gentle stretching." });
+  if (socialAvg > 1.3) tips.push({ icon: "🤝", title: "Stay connected", text: "Isolation amplifies every mental health challenge. Even one genuine 15-minute conversation per day makes a measurable difference. Reach out to one person this week." });
+  if (tips.length === 0) tips.push({ icon: "🌱", title: "Keep tending to your wellbeing", text: "You're doing well. Continue the habits that are working — quality sleep, movement, meaningful connection, and self-compassion. These are the foundations that protect mental health long-term." });
+
+  document.getElementById("insights").innerHTML = tips.map(t => `
+    <div class="insights-card">
+      <div class="insight-title"><span class="insight-icon">${t.icon}</span>${t.title}</div>
+      <div class="insight-text">${t.text}</div>
+    </div>`).join("");
+}
+
+function restart() {
+  answers.fill(null); cur = 0;
+  document.getElementById("result-section").style.display = "none";
+  document.getElementById("quiz-section").style.display = "none";
+  document.getElementById("info-screen").style.display = "flex";
+  document.getElementById("user-name").value = "";
+  document.getElementById("user-age").value = "";
+  document.getElementById("start-btn").disabled = true;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// render() is called after the user submits name and age
+</script>
+</body>
+</html>
